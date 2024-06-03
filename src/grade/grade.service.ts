@@ -19,22 +19,24 @@ export class GradeService {
             where: { id: createGradeDto.student_id },
         });
 
+        const teacher = await this.teacherRepository.findOne({
+            where: { user_id: req.user },
+        });
+        const grade = await this.repository.create({
+            ...createGradeDto,
+            subject_group_id: createGradeDto.subject_id,
+            teacher_id: teacher.id,
+        });
+
         if (!student.rating) {
             student.rating = Number(createGradeDto.grade);
         } else {
             student.rating =
                 Number(student.rating) + Number(createGradeDto.grade);
         }
-        console.log(typeof student.rating);
         await student.save();
-        const teacher = await this.teacherRepository.findOne({
-            where: { user_id: req.user },
-        });
-        return await this.repository.create({
-            ...createGradeDto,
-            subject_group_id: createGradeDto.subject_id,
-            teacher_id: teacher.id,
-        });
+
+        return grade;
     }
 
     async findAll() {
