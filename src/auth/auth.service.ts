@@ -3,6 +3,11 @@ import {
     ForbiddenException,
     Injectable,
 } from '@nestjs/common';
+import { JwtService } from '@nestjs/jwt';
+import * as bcrypt from 'bcrypt';
+import { StudentService } from 'src/student/student.service';
+import { TeacherService } from 'src/teacher/teacher.service';
+import { UserService } from 'src/user/user.service';
 import {
     ChangePasswordDto,
     LoginUserDto,
@@ -10,12 +15,7 @@ import {
     RegisterStudentDto,
     RegisterTeacherDto,
 } from './auth.dto';
-import { UserService } from 'src/user/user.service';
-import * as bcrypt from 'bcrypt';
-import { JwtService } from '@nestjs/jwt';
 import { CustomRequest } from './guards/custom-request.interface';
-import { StudentService } from 'src/student/student.service';
-import { TeacherService } from 'src/teacher/teacher.service';
 
 @Injectable()
 export class AuthService {
@@ -40,6 +40,7 @@ export class AuthService {
                 'You have not registered, please register!',
             );
         }
+
         const isPasswordCorrect = await this.checkPassword(
             loginUserDto.password,
             user.password,
